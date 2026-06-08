@@ -36,6 +36,7 @@ import RulesBanner from "./components/RulesBanner";
 import MatchDataTabs from "./components/MatchDataTabs";
 import html2canvas from "html2canvas";
 import Swal from "sweetalert2";
+import logoPath from "./assets/images/logo_1780948982157.png";
 
 // Default point policy
 const DEFAULT_CONFIG: PointConfig = {
@@ -256,13 +257,36 @@ export default function App() {
 
     // 3. Fetch portal announcements/information updates
     const fetchAnnouncementsListOnMount = async () => {
+      // Load fallback from localStorage first immediately to avoid flicker or offline loss
+      const cached = localStorage.getItem("ff_ft_announcements_backup");
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setAnnouncements(parsed);
+          }
+        } catch (e) {}
+      }
+
       try {
         const res = await fetch("/api/announcements");
         const json = await res.json();
         if (json.success && json.announcements) {
           setAnnouncements(json.announcements);
-          if (json.announcements.length > 0 && localStorage.getItem("announcements_read_completed") !== "true") {
-            setShowUserAnnouncements(true);
+          localStorage.setItem("ff_ft_announcements_backup", JSON.stringify(json.announcements));
+          
+          if (json.announcements.length > 0) {
+            const latestId = json.announcements[0].id;
+            const lastReadId = localStorage.getItem("announcements_last_read_id");
+            
+            if (lastReadId !== latestId) {
+              // A new announcement has been published since the last visit! Clear reading completed status
+              localStorage.removeItem("announcements_read_completed");
+              setShowUserAnnouncements(true);
+            } else if (localStorage.getItem("announcements_read_completed") !== "true") {
+              // No new announcement, but user hasn't marked the current one as read
+              setShowUserAnnouncements(true);
+            }
           }
         }
       } catch (err) {
@@ -1032,6 +1056,12 @@ export default function App() {
   // =====================================
   const handleSaveAnnouncements = async (updatedList: typeof announcements) => {
     setIsSaving(true);
+    // Support instant client-side persistence as robust recovery cache
+    localStorage.setItem("ff_ft_announcements_backup", JSON.stringify(updatedList));
+    // Clear read counters so everyone (including this admin) can see the changes instantly
+    localStorage.removeItem("announcements_read_completed");
+    localStorage.removeItem("announcements_last_read_id");
+
     try {
       const res = await fetch("/api/announcements", {
         method: "POST",
@@ -1209,7 +1239,7 @@ export default function App() {
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
             <img 
-              src="https://files.catbox.moe/dgpc3y.jpg" 
+              src={logoPath} 
               alt="Tournament Logo" 
               referrerPolicy="no-referrer"
               className="w-12 h-12 rounded-xl object-cover border border-orange-500/30 shadow-md shadow-orange-500/10 shrink-0"
@@ -3060,6 +3090,10 @@ export default function App() {
                 type="button"
                 onClick={() => {
                   setShowUserAnnouncements(false);
+                  if (announcements.length > 0) {
+                    const latestId = announcements[0].id;
+                    localStorage.setItem("announcements_last_read_id", latestId);
+                  }
                   localStorage.setItem("announcements_read_completed", "true"); // Saves read acknowledgement so it does not appear again on refresh!
                 }}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-slate-100 font-sans font-bold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer hover:shadow-lg active:scale-95"
