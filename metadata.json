@@ -1,0 +1,6 @@
+{
+  "name": "Kalkulator Turnamen Free Fire",
+  "description": "Aplikasi penghitung hasil turnamen Free Fire menggunakan teknologi Gemini AI Vision OCR dengan Standing Point Fast Tournament.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
