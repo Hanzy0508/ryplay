@@ -36,7 +36,7 @@ import RulesBanner from "./components/RulesBanner";
 import MatchDataTabs from "./components/MatchDataTabs";
 import html2canvas from "html2canvas";
 import Swal from "sweetalert2";
-import logoPath from "./assets/images/logo_1780948982157.png";
+import logoPath from "./assets/images/logo.jpg";
 
 // Default point policy
 const DEFAULT_CONFIG: PointConfig = {
