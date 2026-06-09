@@ -69,12 +69,12 @@ export default function App() {
   });
 
   const [captains, setCaptains] = useState<Array<{ id: number; teamName: string; captainNick: string }>>(() => {
-    const list = [];
-    for (let i = 1; i <= 12; i++) {
-      list.push({ id: i, teamName: `Team ${i}`, captainNick: "" });
-    }
-    return list;
-  });
+  const list = [];
+  for (let i = 1; i <= 12; i++) {
+    list.push({ id: i, teamName: "", captainNick: "" });
+  }
+  return list;
+});
 
   const [activeTab, setActiveTab] = useState<"overall" | "details">("overall");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -1432,7 +1432,15 @@ export default function App() {
                     rows={8}
                     value={bulkText}
                     onChange={(e) => setBulkText(e.target.value)}
-                    placeholder={`Contoh:\n1.VESA GG/VESA.KINGS\n2.GPX CC/HHJI\n3.TIM TIGA/KAPTEN TIGA`}
+                    placeholder={`CONTOH:
+Format:
+NAMA TEAM/NICK KAPTEN
+
+Contoh Pengisian:
+
+1.VESA ZYPHER/VESA.RYU
+2.KINGS RYU/RYU GACOR
+3.DARK PHOENIX/PHOENIX.Ryu`}
                     className="w-full bg-slate-900 border border-slate-800 focus:border-orange-500 text-white font-mono text-[10.5px] p-3 rounded-lg outline-none placeholder:text-slate-700 resize-none font-sans leading-relaxed"
                   />
                   <div className="flex gap-2 mt-2">
