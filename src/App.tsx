@@ -69,12 +69,12 @@ export default function App() {
   });
 
   const [captains, setCaptains] = useState<Array<{ id: number; teamName: string; captainNick: string }>>(() => {
-    const list = [];
-    for (let i = 1; i <= 12; i++) {
-      list.push({ id: i, teamName: `Team ${i}`, captainNick: "" });
-    }
-    return list;
-  });
+  const list = [];
+  for (let i = 1; i <= 12; i++) {
+    list.push({ id: i, teamName: "", captainNick: "" });
+  }
+  return list;
+});
   
   const [activeTab, setActiveTab] = useState<"overall" | "details">("overall");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
