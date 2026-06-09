@@ -69,13 +69,13 @@ export default function App() {
   });
 
   const [captains, setCaptains] = useState<Array<{ id: number; teamName: string; captainNick: string }>>(() => {
-  const list = [];
-  for (let i = 1; i <= 12; i++) {
-    list.push({ id: i, teamName: "", captainNick: "" });
-  }
-  return list;
-});
-
+    const list = [];
+    for (let i = 1; i <= 12; i++) {
+      list.push({ id: i, teamName: `Team ${i}`, captainNick: "" });
+    }
+    return list;
+  });
+  
   const [activeTab, setActiveTab] = useState<"overall" | "details">("overall");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "error" } | null>(null);
@@ -522,11 +522,15 @@ export default function App() {
     showToast("Semua kolom, foto, & data kapten berhasil dibersihkan!", "success");
   };
 
-  const convertCaptainsToBulkText = (caps: Array<{ id: number; teamName: string; captainNick: string }>) => {
-    return caps
-      .map((c, idx) => `${idx + 1}.${c.teamName || `Team ${idx + 1}`}/${c.captainNick || ""}`)
-      .join("\n");
-  };
+  const convertCaptainsToBulkText = (caps) => {
+  return caps
+    .map((c, idx) => {
+      if (!c.teamName && !c.captainNick) return "";
+      return `${idx + 1}.${c.teamName}/${c.captainNick}`;
+    })
+    .filter(Boolean)
+    .join("\n");
+};
 
   const parseAndApplyBulkText = (textVal: string) => {
     if (!textVal.trim()) return;
